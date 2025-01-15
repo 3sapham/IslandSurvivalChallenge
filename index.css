@@ -7,10 +7,6 @@ body {
 
 }
 
-body>* {
-    border: 3px solid black;
-}
-
 #scoreRow {
     height: 65px;
     background-color: palegoldenrod;
@@ -71,6 +67,7 @@ body>* {
 
 .box {
     border-radius: 1em;
+    border: 3px solid black;
 }
 
 #survivor {
@@ -177,10 +174,9 @@ progress {
     font-size: 1.8em;
 }
 
-#actionButtons>div>button {
+.tooltipBtn {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
 }
 
 .tooltip {
@@ -198,7 +194,7 @@ progress {
     right: 105%;
 }
 
-#actionButtons>div>button:disabled:hover .tooltip {
+.tooltipBtn:disabled:hover .tooltip {
     visibility: visible;
     opacity: 1;
 }

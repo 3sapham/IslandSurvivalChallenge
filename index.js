@@ -8,6 +8,8 @@ let resources = {
     rare: 0,
 }
 
+let obsChance = 1;
+let fangChance = 1;
 let craftedTools = [];
 let selectedTool;
 let numOfClicks = 0;
@@ -21,6 +23,7 @@ async function fetchData() {
         return data = await response.json();
     } catch (error) {
         console.log("Error:", error);
+        document.getElementById("toolName").textContent = "Error finding tools";
     }
 }
 
@@ -56,14 +59,12 @@ function displayTool(data) {
 }
 
 function checkStatus() {
-    if (resources.food < 10 && resources.energy < 10) {
-        gameOver("lose");
-    }
+    if (resources.food < 10 && resources.energy < 10) gameOver("lose");
+    
 
     if (resources.energy < 10) {
         disableBtn(true, "gather");
         document.getElementById("gatherTooltip").textContent = "Need at least 10% energy💪";
-
     } else {
         disableBtn(false, "gather")
     }
@@ -111,6 +112,28 @@ function update() {
     if (selectedTool) canCraft(selectedTool)
 }
 
+function canCraft(data) {
+    let reqArray = data.requirements;
+    let possible = true;
+
+    const effect = data.effect;
+    const efArray = effect.split("_");
+    const type = efArray[1];
+
+    if (craftedTools.includes(selectedTool.effect) || craftedTools.includes("quadruple_"+type)) {
+        possible = false;
+    }
+
+    reqArray.forEach(element => {
+        const req = element.split(" ");
+        const amount = req[0];
+        const res = req[1];
+        if (resources[res] < amount) possible = false;
+    })
+
+    possible ? disableBtn(false, "craftBtn") : disableBtn(true, "craftBtn")
+}
+
 function craft(tool) {
     let reqArray = tool.requirements;
     reqArray.forEach(element => {
@@ -142,8 +165,56 @@ function craft(tool) {
     canCraft(selectedTool)
 }
 
-let obsChance = 1;
-let fangChance = 1;
+function gameOver(status) {
+    document.getElementById("modal").style.visibility = "visible";
+    let title = document.getElementById("modalTitle");
+    let emojiText = document.getElementById("modalEmoji");
+    let paragraph = document.getElementById("modalParagraph");
+    let scoretext = document.getElementById("modalScore");
+
+    if (status === "win") {
+        title.textContent = "YOU WON!!";
+        emojiText.textContent = "⭐️🤩🏆";
+        if (numOfClicks < localStorage.getItem("highscore") || localStorage.getItem("highscore") == 0) {
+            localStorage.setItem("highscore", numOfClicks);
+            scoretext.textContent = "New high score: " + numOfClicks + "!!";
+        }
+    } else if (status === "lose") {
+        title.textContent = "YOU PERISHED...";
+        emojiText.textContent = "😵💀🪦";
+        scoretext.textContent = "Your score: " + numOfClicks;
+    }
+    paragraph.textContent = "High score: " + localStorage.highscore;
+
+    document.getElementById("modalBtn").textContent = "Play again";
+}
+
+function reset() {
+    document.getElementById("modal").style.visibility = "hidden";
+    resources = {
+        wood: 20,
+        vine: 10,
+        food: 30,
+        stone: 20,
+        energy: 70,
+        obsidian: 0,
+        rare: 0,
+    }
+
+    let toolsBox = document.getElementById("toolsBox");
+    while (toolsBox.firstChild) {
+        toolsBox.removeChild(toolsBox.firstChild)
+    }
+
+    craftedTools = [];
+    numOfClicks = 0;
+
+    update();
+}
+
+function disableBtn(state, btnName) {
+    document.getElementById(btnName).disabled = state;
+}
 
 function gather(effect) {
     numOfClicks++;
@@ -198,89 +269,8 @@ function sail() {
     gameOver("win");
 }
 
-function gameOver(status) {
-    document.getElementById("modal").style.visibility = "visible";
-    let title = document.getElementById("modalTitle");
-    let emojiText = document.getElementById("modalEmoji");
-    let paragraph = document.getElementById("modalParagraph");
-    let scoretext = document.getElementById("modalScore");
-
-
-    if (status === "win") {
-        title.textContent = "YOU WON!!";
-        emojiText.textContent = "⭐️🤩🏆";
-        if (numOfClicks < localStorage.getItem("highscore") || localStorage.getItem("highscore") == 0) {
-            localStorage.setItem("highscore", numOfClicks);
-            scoretext.textContent = "New high score: " + numOfClicks + "!!";
-        }
-    } else if (status === "lose") {
-        title.textContent = "YOU PERISHED...";
-        emojiText.textContent = "😵💀🪦";
-        scoretext.textContent = "Your score: " + numOfClicks;
-    }
-    paragraph.textContent = "High score: " + localStorage.highscore;
-
-
-    document.getElementById("modalBtn").textContent = "Play again";
-}
-
-function reset() {
-    document.getElementById("modal").style.visibility = "hidden";
-    resources = {
-        wood: 20,
-        vine: 10,
-        food: 30,
-        stone: 20,
-        energy: 70,
-        obsidian: 0,
-        rare: 0,
-    }
-
-    let toolsBox = document.getElementById("toolsBox");
-    while (toolsBox.firstChild) {
-        toolsBox.removeChild(toolsBox.firstChild)
-    }
-
-    craftedTools = [];
-    numOfClicks = 0;
-
-    update();
-}
-
 document.getElementById("modalBtn").addEventListener("click", reset)
 document.getElementById("resetBtn").addEventListener("click", reset)
-
-function canCraft(data) {
-    let reqArray = data.requirements;
-    let possible = true;
-
-    const effect = data.effect;
-    const efArray = effect.split("_");
-    const type = efArray[1];
-
-    if (craftedTools.includes(selectedTool.effect) || craftedTools.includes("quadruple_"+type)) {
-        possible = false;
-    }
-
-    reqArray.forEach(element => {
-        const req = element.split(" ");
-        const amount = req[0];
-        const res = req[1];
-        if (resources[res] < amount) {
-            possible = false;
-        }
-    })
-
-    if (possible) {
-        disableBtn(false, "craftBtn");
-    } else {
-        disableBtn(true, "craftBtn")
-    }
-}
-
-function disableBtn(state, btnName) {
-    document.getElementById(btnName).disabled = state;
-}
 
 document.getElementById("itemSelect").addEventListener("change", (event) => {
     let points = document.getElementById("toolRequirements");

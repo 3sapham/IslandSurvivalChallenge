@@ -76,7 +76,11 @@ body {
     align-items: center;
 }
 
-#status {
+#survivor h2 {
+    margin: 5px auto;
+}
+
+#statusBox {
     gap: 8px;
     display: flex;
     flex-direction: column;
@@ -112,7 +116,6 @@ span {
 
 img {
     border: 3px solid black;
-
 }
 
 button {
@@ -147,11 +150,19 @@ select {
     flex-direction: column;
 }
 
+#progressBar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-weight: bold;
+}
+
 progress {
     height: 25px;
     border: 1px solid black;
     border-radius: 3px;
     box-shadow: 2px 1px 1px black;
+    margin: 5px auto;
 }
 
 .tools {
@@ -184,14 +195,25 @@ progress {
     background-color: black;
     width: 200px;
     padding: 0.5em;
-    font-size: 12px;
+    font-size: 13px;
     color: #fff;
     text-align: center;
     border-radius: 6px;
     position: absolute;
     z-index: 1;
-    top: 3px;
-    right: 105%;
+    top: 5px;
+    right: 110%;
+}
+
+.tooltipBtn .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent black;
 }
 
 .tooltipBtn:disabled:hover .tooltip {
@@ -234,7 +256,7 @@ progress {
     font-size: 2em;
 }
 
-#modalHighScore {
+#modalScore {
     margin: 0 auto;
 }
 

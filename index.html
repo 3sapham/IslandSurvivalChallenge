@@ -10,7 +10,7 @@
 <body>
     <div id="mainBox">
         <div id="scoreRow" class="box">
-            <h3>High score: <span id="highscore"></span></h3>
+            <h3>Best score: <span id="bestscore"></span></h3>
             <h3>Number of clicks: <span id="score"></span></h3>
             <button id="resetBtn">Reset</button>
         </div>
@@ -24,9 +24,9 @@
                     </div>
                     <div>💪</div>
                     <progress id="energy" class="progress is-large" max="100"></progress>
-                    <div id="progressText">34%</div>
+                    <label for="energy" id="progressText"></label>
                 </div>
-                <div id="status">
+                <div id="statusBox">
                     <div>🪵 <span id="wood"></span></div>
                     <div>🥀 <span id="vine"></span></div>
                     <div>🍖 <span id="food"></span></div>
@@ -34,27 +34,37 @@
                     <div>🔮 <span id="obsidian"></span></div>
                     <div>🦷 <span id="rare"></span></div>
                 </div>
-                <div id="toolsBox">
-
-                </div>
+                <div id="toolsBox"></div>
             </div>
             <div id="actions" class="box">
                 <h2>Actions</h2>
                 <div id="actionButtons">
                     <div>
-                        <button id="hunt" class="tooltipBtn">Hunt<span id="huntTooltip" class="tooltip"></span></button>
+                        <button id="huntBtn" class="tooltipBtn">
+                            Hunt
+                            <span id="huntTooltip" class="tooltip"></span>
+                        </button>
                         <span class="actionEmojis">🍖+🦷</span>
                     </div>
                     <div>
-                        <button id="gather" class="tooltipBtn">Gather<span id="gatherTooltip" class="tooltip"></span></button> 
+                        <button id="gatherBtn" class="tooltipBtn">
+                            Gather
+                            <span id="gatherTooltip" class="tooltip"></span>
+                        </button>
                         <span class="actionEmojis">🥀🪵🪨+🔮</span>
                     </div>
                     <div>
-                        <button id="rest" class="tooltipBtn">Rest<span id="restTooltip" class="tooltip"></span></button> 
+                        <button id="restBtn" class="tooltipBtn">
+                            Rest
+                            <span id="restTooltip" class="tooltip"></span>
+                        </button>
                         <span class="actionEmojis">💪</span>
                     </div>
                     <div>
-                        <button id="sail" class="tooltipBtn" disabled>Sail away<span id="sailTooltip" class="tooltip"></span></button> 
+                        <button id="sailBtn" class="tooltipBtn">
+                            Sail away
+                            <span id="sailTooltip" class="tooltip"></span>
+                        </button>
                         <span class="actionEmojis">⛵️</span>
                     </div>
                 </div>
@@ -76,11 +86,13 @@
                 <div>
                     <label for="itemSelect">Choose an item to craft:</label>
                     <select id="itemSelect">
-                        <option id="disselect" disabled selected>Select an item to craft</option>
+                        <option value="0" disabled selected>Select an item to craft</option>
                     </select>
                 </div>
                 <div>
-                    <button id="craftBtn" class="tooltipBtn">Craft <span class="tooltip">Check requirements or better tool is already crafted</span></button>
+                    <button id="craftBtn" class="tooltipBtn">Craft
+                        <span id="craftTooltip" class="tooltip">Check requirements or (super) tool is already crafted</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -96,7 +108,7 @@
                 of
                 survival. You must manage your energy and what you gather efficiently. The ultimate goal is to gather
                 enough
-                resources and craft a boat to escape the island.
+                resources and craft a boat to escape the island with <i>as little clicks as possible</i>.
             </p>
             <span id="modalEmoji"></span>
             <button id="modalBtn">Start Game</button>

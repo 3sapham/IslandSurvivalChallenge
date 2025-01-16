@@ -13,8 +13,8 @@ let fangChance = 1;
 let craftedTools = [];
 let selectedTool;
 let numOfClicks = 0;
-if(!localStorage.highscore) {
-    localStorage.setItem("highscore", 0);
+if (!localStorage.bestscore) {
+    localStorage.setItem("bestscore", 0);
 }
 
 async function fetchData() {
@@ -55,53 +55,50 @@ function displayTool(data) {
         document.getElementById("toolRequirements").appendChild(point);
     });
     let image = document.getElementById("toolImage");
-    image.setAttribute('src', data["img-url"])
+    image.setAttribute('src', data["img-url"]);
 }
 
 function checkStatus() {
     if (resources.food < 10 && resources.energy < 10) gameOver("lose");
     
-
     if (resources.energy < 10) {
-        disableBtn(true, "gather");
+        disableBtn(true, "gatherBtn");
         document.getElementById("gatherTooltip").textContent = "Need at least 10% energy💪";
     } else {
-        disableBtn(false, "gather")
+        disableBtn(false, "gatherBtn");
     }
 
     if (resources.energy < 20) {
-        disableBtn(true, "hunt");
+        disableBtn(true, "huntBtn");
         document.getElementById("huntTooltip").textContent = "Need at least 20% energy💪";
     } else {
-        disableBtn(false, "hunt")
+        disableBtn(false, "huntBtn");
     }
 
     if (resources.food < 10 || resources.energy > 100) {
-        disableBtn(true, "rest");
+        disableBtn(true, "restBtn");
         document.getElementById("restTooltip").textContent = "Need at least 10 food🍖";
     } else {
-        disableBtn(false, "rest")
+        disableBtn(false, "restBtn");
     }
 
-    if (craftedTools.includes("HOME!!!") && resources.energy > 40) {
-        disableBtn(false, "sail")
+    if (craftedTools.includes("HOME!!!") && resources.energy >= 40) {
+        disableBtn(false, "sailBtn");
     } else {
-        disableBtn(true, "sail")
+        disableBtn(true, "sailBtn");
         document.getElementById("sailTooltip").textContent = "Need at least 40% energy💪 and a boat";
     }
 }
 
 function update() {
     checkStatus();
-    document.getElementById("highscore").textContent = localStorage.getItem("highscore");
+    document.getElementById("bestscore").textContent = localStorage.getItem("bestscore");
     document.getElementById("score").textContent = numOfClicks;
-    console.log("getitem "+localStorage.getItem("highscore"));
-    console.log(".highscore "+localStorage.highscore);
 
     for (const res in resources) {
         if (res === "energy") {
             document.getElementById(res).value = resources[res];
-            if(resources[res]>100) {
+            if (resources[res]>100) {
                 document.getElementById("progressText").textContent = 100 + "%";
             } else {
                 document.getElementById("progressText").textContent = resources[res] + "%";
@@ -109,7 +106,7 @@ function update() {
         }
         document.getElementById(res).textContent = resources[res];
     }
-    if (selectedTool) canCraft(selectedTool)
+    if (selectedTool) canCraft(selectedTool);
 }
 
 function canCraft(data) {
@@ -131,7 +128,7 @@ function canCraft(data) {
         if (resources[res] < amount) possible = false;
     })
 
-    possible ? disableBtn(false, "craftBtn") : disableBtn(true, "craftBtn")
+    possible ? disableBtn(false, "craftBtn") : disableBtn(true, "craftBtn");
 }
 
 function craft(tool) {
@@ -140,7 +137,7 @@ function craft(tool) {
         const req = element.split(" ");
         const amount = req[0];
         const res = req[1];
-        resources[res] -= amount
+        resources[res] -= amount;
     })
 
     const effect = tool.effect;
@@ -153,16 +150,15 @@ function craft(tool) {
         craftedTools = craftedTools.filter((r) => r !== "double_"+type);
     }
     
-    craftedTools.push(tool.effect)
-    console.log("crafted: "+craftedTools)
+    craftedTools.push(tool.effect);
 
     let img = document.createElement("img");
-    img.setAttribute('src', tool["img-url"])
+    img.setAttribute('src', tool["img-url"]);
     img.id = tool.effect;
 
     img.className = "tools";
     document.getElementById("toolsBox").appendChild(img);
-    canCraft(selectedTool)
+    canCraft(selectedTool);
 }
 
 function gameOver(status) {
@@ -175,16 +171,16 @@ function gameOver(status) {
     if (status === "win") {
         title.textContent = "YOU WON!!";
         emojiText.textContent = "⭐️🤩🏆";
-        if (numOfClicks < localStorage.getItem("highscore") || localStorage.getItem("highscore") == 0) {
-            localStorage.setItem("highscore", numOfClicks);
-            scoretext.textContent = "New high score: " + numOfClicks + "!!";
+        if (numOfClicks < localStorage.getItem("bestscore") || localStorage.getItem("bestscore") == 0) {
+            localStorage.setItem("bestscore", numOfClicks);
+            scoretext.textContent = "New best score: " + numOfClicks + "!!";
         }
     } else if (status === "lose") {
         title.textContent = "YOU PERISHED...";
         emojiText.textContent = "😵💀🪦";
-        scoretext.textContent = "Your score: " + numOfClicks;
+        scoretext.textContent = "Your number of clicks: " + numOfClicks;
     }
-    paragraph.textContent = "High score: " + localStorage.highscore;
+    paragraph.textContent = "Best score: " + localStorage.bestscore;
 
     document.getElementById("modalBtn").textContent = "Play again";
 }
@@ -199,6 +195,17 @@ function reset() {
         energy: 70,
         obsidian: 0,
         rare: 0,
+    }
+
+    document.getElementById("toolName").textContent = "";
+    document.getElementById("toolDescription").textContent = "";
+    document.getElementById("toolReqTitle").textContent = "";
+    document.getElementById("toolImage").setAttribute('src', " " );
+    document.getElementById("itemSelect").value = "0";
+
+    let points = document.getElementById("toolRequirements");
+    while (points.firstChild) {
+        points.removeChild(points.firstChild)
     }
 
     let toolsBox = document.getElementById("toolsBox");
@@ -269,8 +276,9 @@ function sail() {
     gameOver("win");
 }
 
-document.getElementById("modalBtn").addEventListener("click", reset)
-document.getElementById("resetBtn").addEventListener("click", reset)
+document.getElementById("modalBtn").addEventListener("click", reset);
+
+document.getElementById("resetBtn").addEventListener("click", reset);
 
 document.getElementById("itemSelect").addEventListener("change", (event) => {
     let points = document.getElementById("toolRequirements");
@@ -279,7 +287,7 @@ document.getElementById("itemSelect").addEventListener("change", (event) => {
     }
     displayTool(data[event.target.value - 1]);
     selectedTool = data[event.target.value - 1];
-    canCraft(selectedTool)
+    canCraft(selectedTool);
 });
 
 document.getElementById("craftBtn").addEventListener("click", () => {
@@ -287,11 +295,11 @@ document.getElementById("craftBtn").addEventListener("click", () => {
     update();
 });
 
-document.getElementById("hunt").addEventListener("click", () => {
+document.getElementById("huntBtn").addEventListener("click", () => {
     let toolEffect = null;
     if (craftedTools.length > 0) {
         craftedTools.forEach(element => {
-            const effect = element.split("_")
+            const effect = element.split("_");
             if (effect[1] === "hunt") {
                     toolEffect = effect[0];
                
@@ -303,11 +311,11 @@ document.getElementById("hunt").addEventListener("click", () => {
     update();
 });
 
-document.getElementById("gather").addEventListener("click", () => {
+document.getElementById("gatherBtn").addEventListener("click", () => {
     let toolEffect = null;
     if (craftedTools.length > 0) {
         craftedTools.forEach(element => {
-            const effect = element.split("_")
+            const effect = element.split("_");
             if (effect[1] === "wood") {
                 if (toolEffect !== "quadruple") {
                     toolEffect = effect[0];
@@ -321,11 +329,11 @@ document.getElementById("gather").addEventListener("click", () => {
     update();
 });
 
-document.getElementById("rest").addEventListener("click", () => {
-    rest()
+document.getElementById("restBtn").addEventListener("click", () => {
+    rest();
     update();
 });
 
-document.getElementById("sail").addEventListener("click", () => {
-    sail()
+document.getElementById("sailBtn").addEventListener("click", () => {
+    sail();
 });

@@ -1,6 +1,5 @@
 # Island Survival Challenge
 A dynamic webpage using "vanilla" JavaScript game where you have to survive on a stranded island by gathering resources, crafting tools, managing energy, and building a boat to escape. RESTful API is used to provide data for available tools that can be crafted, each with specific effects on actions.
-API Endpoint: https://thoughtful-vagabond-fibre.glitch.me/tools
 
 Link to web page: https://3sapham.github.io/IslandSurvivalChallenge/
 
